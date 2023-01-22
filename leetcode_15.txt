@@ -1,0 +1,644 @@
+206. Reverse Linked List
+Easy
+
+13806
+
+238
+
+Add to List
+
+Share
+Given the head of a singly linked list, reverse the list, and return the reversed list.
+
+ 
+
+Example 1:
+
+
+Input: head = [1,2,3,4,5]
+Output: [5,4,3,2,1]
+Example 2:
+
+
+Input: head = [1,2]
+Output: [2,1]
+Example 3:
+
+Input: head = []
+Output: []
+ 
+
+Constraints:
+
+The number of nodes in the list is the range [0, 5000].
+-5000 <= Node.val <= 5000
+
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        next = None
+        while head:
+            head.next, head, next = next, head.next, head
+        return next # ***important***
+
+==============================================================
+
+
+542. 01 Matrix
+Medium
+
+5287
+
+262
+
+Add to List
+
+Share
+Given an m x n binary matrix mat, return the distance of the nearest 0 for each cell.
+
+The distance between two adjacent cells is 1.
+
+ 
+
+Example 1:
+
+
+Input: mat = [[0,0,0],[0,1,0],[0,0,0]]
+Output: [[0,0,0],[0,1,0],[0,0,0]]
+Example 2:
+
+
+Input: mat = [[0,0,0],[0,1,0],[1,1,1]]
+Output: [[0,0,0],[0,1,0],[1,2,1]]
+ 
+
+Constraints:
+
+m == mat.length
+n == mat[i].length
+1 <= m, n <= 104
+1 <= m * n <= 104
+mat[i][j] is either 0 or 1.
+There is at least one 0 in mat.
+
+
+
+
+class Solution:
+    def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
+        q = collections.deque()
+        row = len(mat)
+        col = len(mat[0])
+        dirs = [(-1, 0),(0, -1),(1,0),(0,1)] 
+        for x in range(row):
+            for y in range(col):
+                if mat[x][y] == 0:
+                    q.append((x,y))
+                else:
+                    mat[x][y] = float("inf")
+        while q:
+            x,y = q.popleft()
+            for dx, dy in dirs:
+                new_x, new_y = x+dx, y+dy
+                if 0 <= new_x < row and 0 <= new_y < col and mat[new_x][new_y] > mat[x][y]+1:
+                    q.append((new_x,new_y))
+                    mat[new_x][new_y] = mat[x][y]+1
+        return mat
+
+
+========================================
+
+136. Single Number
+Easy
+
+10878
+
+411
+
+Add to List
+
+Share
+Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.
+
+You must implement a solution with a linear runtime complexity and use only constant extra space.
+
+ 
+
+Example 1:
+
+Input: nums = [2,2,1]
+Output: 1
+Example 2:
+
+Input: nums = [4,1,2,1,2]
+Output: 4
+Example 3:
+
+Input: nums = [1]
+Output: 1
+
+
+
+
+
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        res=0 #n^0=n
+        for n in nums:
+            res=n^res
+        return res
+
+===============================
+
+
+994. Rotting Oranges
+Medium
+
+7758
+
+294
+
+Add to List
+
+Share
+You are given an m x n grid where each cell can have one of three values:
+
+0 representing an empty cell,
+1 representing a fresh orange, or
+2 representing a rotten orange.
+Every minute, any fresh orange that is 4-directionally adjacent to a rotten orange becomes rotten.
+
+Return the minimum number of minutes that must elapse until no cell has a fresh orange. If this is impossible, return -1.
+
+ 
+
+Example 1:
+
+
+Input: grid = [[2,1,1],[1,1,0],[0,1,1]]
+Output: 4
+Example 2:
+
+Input: grid = [[2,1,1],[0,1,1],[1,0,1]]
+Output: -1
+Explanation: The orange in the bottom left corner (row 2, column 0) is never rotten, because rotting only happens 4-directionally.
+Example 3:
+
+Input: grid = [[0,2]]
+Output: 0
+Explanation: Since there are already no fresh oranges at minute 0, the answer is just 0.
+ 
+
+Constraints:
+
+m == grid.length
+n == grid[i].length
+1 <= m, n <= 10
+grid[i][j] is 0, 1, or 2.
+
+
+
+class Solution:
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        row, col = len(grid), len(grid[0])
+        dirs = [(-1,0),(0,1),(1,0),(0,-1)]
+        fresh_set=set()
+        rotten = collections.deque()
+        step = 0
+        for x in range(row):
+            for y in range(col):
+                if grid[x][y]==1:
+                    fresh_set.add((x,y))
+                elif grid[x][y]==2:
+                    rotten.append([x,y,step])
+        while rotten:
+            x,y,step = rotten.popleft()
+            for dx, dy in dirs:
+                if 0<=x+dx<row and 0<=y+dy<col and grid[x+dx][y+dy] == 1:
+                    grid[x+dx][y+dy]=2
+                    fresh_set.remove((x+dx,y+dy))
+                    rotten.append([x+dx,y+dy,step+1])
+        return step if not fresh_set else -1
+
+
+
+===============================================
+
+
+77. Combinations
+Medium
+
+4805
+
+157
+
+Add to List
+
+Share
+Given two integers n and k, return all possible combinations of k numbers out of the range [1, n].
+
+You may return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: n = 4, k = 2
+Output:
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+Example 2:
+
+Input: n = 1, k = 1
+Output: [[1]]
+ 
+
+Constraints:
+
+1 <= n <= 20
+1 <= k <= n
+Accepted
+571,128
+Submissions
+874,587
+
+
+
+
+
+class Solution:
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        nums=[]
+        for i in range(1,n+1,1):
+            nums.append(i)
+        temp=[]
+        result=[]
+        def dfs(m,num):
+            if m==k:
+                result.append(temp[:])
+                return
+            else:
+                if len(num)<k-m:
+                    return
+                for i in range(len(num)):
+                    temp.append(num[i])
+                    dfs(m+1,num[i+1:])
+                    temp.pop()
+        dfs(0,nums)
+        return result
+
+
+======================================================
+
+
+46. Permutations
+Medium
+
+12239
+
+211
+
+Add to List
+
+Share
+Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,3]
+Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+Example 2:
+
+Input: nums = [0,1]
+Output: [[0,1],[1,0]]
+Example 3:
+
+Input: nums = [1]
+Output: [[1]]
+ 
+
+Constraints:
+
+1 <= nums.length <= 6
+-10 <= nums[i] <= 10
+All the integers of nums are unique.
+
+
+
+
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        ans = []
+        used = [False] * len(nums)
+        def dfs(path: List[int]) -> None:
+            if len(path) == len(nums):
+                ans.append(path)
+                return
+            for i in range(len(nums)):
+                if used[i]:
+                    continue
+                used[i] = True
+                dfs(path + [nums[i]])
+                used[i] = False
+        dfs([])
+        return ans
+
+
+===========================================================
+
+
+784. Letter Case Permutation
+Medium
+
+3641
+
+147
+
+Add to List
+
+Share
+Given a string s, you can transform every letter individually to be lowercase or uppercase to create another string.
+
+Return a list of all possible strings we could create. Return the output in any order.
+
+ 
+
+Example 1:
+
+Input: s = "a1b2"
+Output: ["a1b2","a1B2","A1b2","A1B2"]
+Example 2:
+
+Input: s = "3z4"
+Output: ["3z4","3Z4"]
+ 
+
+Constraints:
+
+1 <= s.length <= 12
+s consists of lowercase English letters, uppercase English letters, and digits.
+
+
+
+class Solution:
+    def letterCasePermutation(self, s: str) -> List[str]:
+        result = [[]]
+        for c in s:
+            if c.isalpha():
+                for i in range(len(result)):
+                    result.append(result[i][:])
+                    result[i].append(c.lower())
+                    result[-1].append(c.upper())
+            else:
+                for s in result:
+                    s.append(c)
+        return map("".join, result)
+
+
+=====================================================
+
+70. Climbing Stairs
+Easy
+
+13608
+
+403
+
+Add to List
+
+Share
+You are climbing a staircase. It takes n steps to reach the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+ 
+
+Example 1:
+
+Input: n = 2
+Output: 2
+Explanation: There are two ways to climb to the top.
+1. 1 step + 1 step
+2. 2 steps
+Example 2:
+
+Input: n = 3
+Output: 3
+Explanation: There are three ways to climb to the top.
+1. 1 step + 1 step + 1 step
+2. 1 step + 2 steps
+3. 2 steps + 1 step
+ 
+
+Constraints:
+
+1 <= n <= 45
+Accepted
+1.8M
+Submissions
+3.4M
+Seen this question in a real interview before?
+
+
+
+
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        # dp[i] := # of distinct ways to climb to i-th stair
+        dp = [1, 1] + [0] * (n - 1)
+
+        for i in range(2, n + 1):
+            dp[i] = dp[i - 1] + dp[i - 2]
+
+        return dp[n]
+
+========================================================
+
+
+198. House Robber
+Medium
+
+13910
+
+286
+
+Add to List
+
+Share
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+
+Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,3,1]
+Output: 4
+Explanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).
+Total amount you can rob = 1 + 3 = 4.
+Example 2:
+
+Input: nums = [2,7,9,3,1]
+Output: 12
+Explanation: Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).
+Total amount you can rob = 2 + 9 + 1 = 12.
+ 
+
+Constraints:
+
+1 <= nums.length <= 100
+0 <= nums[i] <= 400
+Accepted
+1.3M
+Submissions
+2.6M
+Seen this question in a real interview before?
+
+
+
+
+
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+            if not nums:
+                return 0
+            if len(nums) == 1:
+                return nums[0]
+
+            # dp[i]: = max money of robbing nums[0..i]
+            dp = [0] * len(nums)
+            dp[0] = nums[0]
+            dp[1] = max(nums[0], nums[1])
+
+            for i in range(2, len(nums)):
+                dp[i] = max(dp[i - 1], dp[i - 2] + nums[i])
+
+            return dp[-1]
+
+
+=====================================================
+
+
+120. Triangle
+Medium
+
+6653
+
+433
+
+Add to List
+
+Share
+Given a triangle array, return the minimum path sum from top to bottom.
+
+For each step, you may move to an adjacent number of the row below. More formally, if you are on index i on the current row, you may move to either index i or index i + 1 on the next row.
+
+ 
+
+Example 1:
+
+Input: triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
+Output: 11
+Explanation: The triangle looks like:
+   2
+  3 4
+ 6 5 7
+4 1 8 3
+The minimum path sum from top to bottom is 2 + 3 + 5 + 1 = 11 (underlined above).
+Example 2:
+
+Input: triangle = [[-10]]
+Output: -10
+ 
+
+Constraints:
+
+1 <= triangle.length <= 200
+triangle[0].length == 1
+triangle[i].length == triangle[i - 1].length + 1
+-104 <= triangle[i][j] <= 104
+ 
+
+Follow up: Could you do this using only O(n) extra space, where n is the total number of rows in the triangle?
+
+
+
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        for i in reversed(range(len(triangle) - 1)):
+            for j in range(i + 1):
+                triangle[i][j] += min(triangle[i + 1][j],
+                                  triangle[i + 1][j + 1])
+
+        return triangle[0][0]
+
+
+
+==========================================================
+
+
+190. Reverse Bits
+Easy
+
+3428
+
+881
+
+Add to List
+
+Share
+Reverse bits of a given 32 bits unsigned integer.
+
+Note:
+
+Note that in some languages, such as Java, there is no unsigned integer type. In this case, both input and output will be given as a signed integer type. They should not affect your implementation, as the integer's internal binary representation is the same, whether it is signed or unsigned.
+In Java, the compiler represents the signed integers using 2's complement notation. Therefore, in Example 2 above, the input represents the signed integer -3 and the output represents the signed integer -1073741825.
+ 
+
+Example 1:
+
+Input: n = 00000010100101000001111010011100
+Output:    964176192 (00111001011110000010100101000000)
+Explanation: The input binary string 00000010100101000001111010011100 represents the unsigned integer 43261596, so return 964176192 which its binary representation is 00111001011110000010100101000000.
+Example 2:
+
+Input: n = 11111111111111111111111111111101
+Output:   3221225471 (10111111111111111111111111111111)
+Explanation: The input binary string 11111111111111111111111111111101 represents the unsigned integer 4294967293, so return 3221225471 which its binary representation is 10111111111111111111111111111111.
+ 
+
+Constraints:
+
+The input must be a binary string of length 32
+ 
+
+Follow up: If this function is called many times, how would you optimize it?
+
+
+
+
+class Solution:
+    def reverseBits(self, n: int) -> int:
+        ans = 0
+
+        for i in range(32):
+            if n >> i & 1:
+                ans |= 1 << 31 - i
+
+        return ans
+            
+            
